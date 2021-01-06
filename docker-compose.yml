@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  api:
+    build: ./api
+    container_name: api
+    command: bash -c "uwsgi app.ini"
+    restart: always
+    volumes:
+      - ./api/:/app
+    env_file:
+      - .env
+    expose:
+      - 9000
+    depends_on:
+      - db
+
+  nginx:
+    build: ./ui
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+  
+  db:
+    container_name: db
+    image: postgres
+    env_file:
+      .env
+

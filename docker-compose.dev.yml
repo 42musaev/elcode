@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  api:
+    build: ./api
+    container_name: api_dev
+    command: bash -c "uwsgi app.ini"
+    restart: always
+    volumes:
+      - ./api/:/app
+    env_file:
+      - .env
+    expose:
+      - 9000
+    depends_on:
+      - db
+
+  ui:
+    container_name: ui_dev
+    build:
+      context: ./ui
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./ui/:/app
+    command: npm run serve
+
+  nginx:
+    build: ./nginx
+    container_name: nginx_dev
+    restart: always
+    ports:
+      - "80:80"
+      - "8080:8080"
+
+  db:
+    container_name: db_dev
+    image: postgres
+    env_file:
+      .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+
