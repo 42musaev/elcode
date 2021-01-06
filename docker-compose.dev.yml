@@ -35,6 +35,7 @@ services:
   db:
     container_name: db_dev
     image: postgres
+    restart: always
     env_file:
       .env
     volumes:
