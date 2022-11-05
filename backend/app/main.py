@@ -1,9 +1,20 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.database.conf import database
 from app.users.api import users
 
-app = FastAPI()
+app = FastAPI(docs_url='/api/v1/docs', redoc_url='/api/v1/redoc')
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
@@ -16,4 +27,4 @@ async def shutdown():
     await database.disconnect()
 
 
-app.include_router(users)
+app.include_router(users, prefix='/api/v1')
