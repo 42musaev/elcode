@@ -15,12 +15,16 @@ users = APIRouter()
 
 
 @users.get("/users/ping")
-async def read_own_items(current_user: UserSchema = Depends(get_current_active_user)):
+async def read_own_items(
+        current_user: UserSchema = Depends(get_current_active_user)
+):
     return {"ping": "pong"}
 
 
 @users.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(
+        form_data: OAuth2PasswordRequestForm = Depends()
+):
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
