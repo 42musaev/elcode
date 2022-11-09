@@ -1,10 +1,12 @@
-from typing import Dict
-from fastapi import HTTPException
-from sqlalchemy import insert, select
-from starlette import status
+import uuid
+from datetime import datetime
+
+from sqlalchemy import insert, select, update
 from app.database.conf import database
 from app.users.schemas import UserSchema, UserCreateSchema
-from app.users.utils import get_password_hash
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class UserCrud:
@@ -12,28 +14,45 @@ class UserCrud:
     def __init__(self, model):
         self.model = model
 
-    async def create_user(
-            self,
-            user_db: UserCreateSchema
-    ) -> UserSchema | Dict:
-        user = await self.get_user_by_email(user_db.email)
-        if user:
-            raise HTTPException(
-                status_code=status.HTTP_200_OK,
-                detail={"detail": "email already exists"}
-            )
+    async def create_user(self, user: UserCreateSchema):
+        salt = uuid.uuid4().hex
         query = insert(self.model).values(
-            email=user_db.email,
-            hashed_password=get_password_hash(
-                user_db.password.get_secret_value()
-            ),
-            disable=user_db.disable,
+            email=user.email,
+            hashed_password=self.password_hash(user.password)
+
         )
         pk = await database.execute(query)
-        return UserSchema(id=pk, email=user_db.email)
+        return UserSchema(id=pk, email=user.email)
 
     async def get_user_by_email(self, email):
         query = select(self.model).where(self.model.email == email)
-        user = await database.fetch_one(query)
-        if user:
+        user = await database.fetch_one(query=query)
+        return user
+
+    async def get_user_by_email_and_password(self, email: str, password: str):
+        query = select(self.model).where(self.model.email == email)
+        user = await database.fetch_one(query=query)
+        verify = self.verify_password(password, user.hashed_password)
+        if verify:
             return UserSchema(**user)
+
+    async def update_refresh_token(
+            self,
+            user: UserSchema,
+            refresh_token: str,
+            expires_token: datetime
+    ):
+        query = (
+            update(self.model).
+            where(self.model.email == user.email).
+            values(refresh_token=refresh_token, expires_token=expires_token)
+        )
+        return await database.execute(query)
+
+    @staticmethod
+    def verify_password(plain_password, hashed_password):
+        return pwd_context.verify(plain_password, hashed_password)
+
+    @staticmethod
+    def password_hash(password):
+        return pwd_context.hash(password)

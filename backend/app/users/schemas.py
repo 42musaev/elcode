@@ -1,16 +1,13 @@
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel, Field, EmailStr, SecretStr, validator
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+from pydantic import BaseModel, EmailStr
 
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
+class UserLoginSchema(BaseModel):
+    email: EmailStr
+    password: str
 
 
-class TokenData(BaseModel):
-    username: str | None = None
+class UserCreateSchema(UserLoginSchema):
+    pass
 
 
 class UserSchema(BaseModel):
@@ -18,19 +15,10 @@ class UserSchema(BaseModel):
     email: EmailStr
 
 
-class UserCheckSchema(BaseModel):
-    email: EmailStr
-    hashed_password: str
-    disable: bool = False
+class TokenSchema(BaseModel):
+    access_token: str
+    refresh_token: str
 
 
-class UserCreateSchema(BaseModel):
-    email: EmailStr
-    password: SecretStr
-    disable: bool = False
-
-    @validator('password', pre=True)
-    def passwords_match(cls, value):
-        if len(value) < 8:
-            raise ValueError('!')
-        return value
+class RefreshToken(BaseModel):
+    refresh_token: str
