@@ -2,49 +2,44 @@ from fastapi import APIRouter, HTTPException, Depends
 from starlette import status
 
 from app.users import User
-from app.users.curd import UserCrud
+from app.users.curd import UserCrudHttp
 from app.users.schemas import (
     UserLoginSchema,
     UserCreateSchema,
     UserSchema,
-    TokenSchema, RefreshToken,
+    TokenSchema,
 )
-from app.users.utils import create_tokens, update_refresh_token, get_current_user
+from app.users.utils import (
+    create_tokens,
+    update_refresh_token,
+    auth
+)
 
 users = APIRouter()
 
 
-@users.get('/ping')
-async def ping(user: UserSchema = Depends(get_current_user)):
-    return UserSchema(user.dict())
-
-@users.post('/token', response_model=TokenSchema, status_code=200)
-async def create_token(user: UserLoginSchema):
-    user = await UserCrud(User).get_user_by_email_and_password(
-        user.email,
-        user.password,
-    )
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return await create_tokens(user)
-
-
-@users.post('/token-refresh')
-async def update_token(refresh_token: str):
-    updated = await update_refresh_token(refresh_token)
-    if not updated:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return updated
+@users.get("/health-check")
+async def health_check(user: UserSchema = Depends(auth)):
+    return user.dict() | {"status-service": "work"}
 
 
 @users.post('/users', response_model=UserSchema, status_code=201)
 async def create_user(user: UserCreateSchema):
-    return await UserCrud(User).create_user(user)
+    return await UserCrudHttp(User).create_user_http(user)
+
+
+@users.post('/token', response_model=TokenSchema, status_code=200)
+async def create_token(user: UserLoginSchema):
+    user = (
+        await UserCrudHttp(User).
+        get_user_by_email_and_password_http(
+            user.email,
+            user.password,
+        )
+    )
+    return await create_tokens(user, roles=["admin"])
+
+
+@users.post('/token-refresh', status_code=200)
+async def update_token(refresh_token: str):
+    return await update_refresh_token(refresh_token)

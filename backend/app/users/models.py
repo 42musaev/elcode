@@ -2,7 +2,8 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Boolean, TIMESTAMP
+    Boolean,
+    TIMESTAMP
 )
 
 from app.database.conf import Base

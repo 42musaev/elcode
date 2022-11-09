@@ -1,8 +1,8 @@
-"""initq
+"""init
 
-Revision ID: ec19e253a464
+Revision ID: cf79f4844b6e
 Revises: 
-Create Date: 2022-11-08 23:23:33.467779
+Create Date: 2022-11-09 16:21:42.938974
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ec19e253a464'
+revision = 'cf79f4844b6e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,11 +22,11 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=256), nullable=False),
     sa.Column('hashed_password', sa.String(length=512), nullable=False),
-    sa.Column('salt', sa.String(length=256), nullable=False),
-    sa.Column('refresh_token', sa.String(length=512), nullable=False),
-    sa.Column('expires_token', sa.TIMESTAMP(), nullable=False),
+    sa.Column('refresh_token', sa.String(length=512), nullable=True),
+    sa.Column('expires_token', sa.TIMESTAMP(), nullable=True),
     sa.Column('disable', sa.Boolean(), server_default='false', nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email')
     )
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
     # ### end Alembic commands ###

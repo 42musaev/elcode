@@ -1,9 +1,8 @@
 import databases
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine
 
-DATABASE_URL = "postgresql+asyncpg://postgres:postgres@db/test_db"
-database = databases.Database(DATABASE_URL)
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-
+DATABASE_URI = "postgresql+asyncpg://postgres:postgres@db:5432/test_db"
+engine = create_engine(DATABASE_URI, connect_args={"check_same_thread": True})
+database = databases.Database(DATABASE_URI)
 Base = declarative_base()

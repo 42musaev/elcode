@@ -1,0 +1,3 @@
+[flake8]
+extend-ignore = F403, F405, F401
+exclude = ./alembic,./app/users/config.py
