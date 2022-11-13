@@ -21,6 +21,17 @@ def client():
         yield c
 
 
+@pytest.fixture(scope='module', autouse=True)
+def user_token(client):
+    data_user = {
+        "email": "user@domain.com",
+        "password": "password"
+    }
+    client.post("/api/v1/users", json=data_user)
+    response = client.post("/api/v1/token", json=data_user)
+    return response.json()
+
+
 @pytest.fixture(scope='session', autouse=True)
 def create_test_database():
     if not database_exists(settings.get_database_url()):
