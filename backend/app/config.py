@@ -1,5 +1,4 @@
-from functools import lru_cache
-
+# from functools import lru_cache
 from pydantic import BaseSettings
 
 
@@ -13,7 +12,6 @@ class Settings(BaseSettings):
     TESTING: bool
     DATABASE_URL: str
     DATABASE_TEST_URL: str
-
 
     def get_database_url(self):
         if self.TESTING:

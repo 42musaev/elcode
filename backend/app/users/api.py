@@ -1,19 +1,15 @@
-from fastapi import APIRouter, HTTPException, Depends
-from starlette import status
+from fastapi import APIRouter
+from fastapi import Depends
 
 from app.users import User
 from app.users.curd import UserCrudHttp
-from app.users.schemas import (
-    UserLoginSchema,
-    UserCreateSchema,
-    UserSchema,
-    TokenSchema,
-)
-from app.users.utils import (
-    create_tokens,
-    update_refresh_token,
-    auth
-)
+from app.users.schemas import UserLoginSchema
+from app.users.schemas import UserCreateSchema
+from app.users.schemas import UserSchema
+from app.users.schemas import TokenSchema
+from app.users.utils import create_tokens
+from app.users.utils import update_refresh_token
+from app.users.utils import auth
 
 users = APIRouter()
 

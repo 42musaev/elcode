@@ -1,13 +1,16 @@
-import uuid
 from datetime import datetime
 from typing import Dict
 
+from sqlalchemy import select
+from sqlalchemy import insert
+from sqlalchemy import update
+
 from fastapi import HTTPException
-from sqlalchemy import insert, select, update
-from starlette import status
+from fastapi import status
 
 from app.database.conf import database
 from app.users.schemas import UserSchema, UserCreateSchema
+
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

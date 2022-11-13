@@ -1,10 +1,8 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Boolean,
-    TIMESTAMP
-)
+from sqlalchemy import Column
+from sqlalchemy import String
+from sqlalchemy import Integer
+from sqlalchemy import TIMESTAMP
+from sqlalchemy import Boolean
 
 from app.database.conf import Base
 

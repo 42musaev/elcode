@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from pydantic import EmailStr
+from pydantic import validator
 
 
 class UserLoginSchema(BaseModel):
@@ -7,7 +9,17 @@ class UserLoginSchema(BaseModel):
 
 
 class UserCreateSchema(UserLoginSchema):
-    pass
+    password: str
+
+    @validator('password', always=True)
+    def validate_password1(cls, value):
+        min_length = 8
+        errors = ''
+        if len(value) < min_length:
+            errors += 'Password must be at least 8 characters long. '
+        if errors:
+            raise ValueError(errors)
+        return value
 
 
 class UserSchema(BaseModel):
