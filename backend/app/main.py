@@ -8,7 +8,7 @@ app = FastAPI(docs_url='/api/v1/docs', redoc_url='/api/v1/redoc')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=['http://localhost'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
