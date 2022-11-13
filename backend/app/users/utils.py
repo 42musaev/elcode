@@ -1,19 +1,27 @@
-from datetime import datetime, timedelta
-from typing import Optional, List
-from fastapi import HTTPException
-from jose import jwt, JWTError
+from datetime import datetime
+from datetime import timedelta
+from typing import List
+
+from jose import jwt
+from jose import JWTError
+
 from starlette import status
 from starlette.requests import Request
-from app.users import User
-from app.users.config import Config
-from fastapi.security import HTTPBearer
 
-from app.users.curd import UserCrud, UserCrudHttp
+from app.users import User
+from app.users.curd import UserCrud
+from app.users.curd import UserCrudHttp
 from app.users.schemas import UserSchema
+from app.config import get_settings
+
+from fastapi.security import HTTPBearer
+from fastapi import HTTPException
+
+settings = get_settings()
 
 
 class OptionalHTTPBearer(HTTPBearer):
-    async def __call__(self, request: Request) -> Optional[str]:
+    async def __call__(self, request: Request) -> UserSchema | HTTPException:
         from fastapi import status
         try:
             r = await super().__call__(request)
@@ -31,24 +39,27 @@ class OptionalHTTPBearer(HTTPBearer):
 auth = OptionalHTTPBearer()
 
 
-async def create_tokens(user: UserSchema, roles: List[str] = None):
+async def create_tokens(
+        user: UserSchema,
+        roles: List[str] = None,
+):
     expire = datetime.utcnow() + timedelta(
-        minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
     data = {"sub": user.email, "exp": expire, "roles": roles}
     access_token = jwt.encode(
         data,
-        Config.ACCESS_TOKEN_SECRET_KEY,
-        algorithm=Config.ALGORITHM
+        settings.ACCESS_TOKEN_SECRET_KEY,
+        algorithm=settings.ALGORITHM
     )
     expire = datetime.utcnow() + timedelta(
-        days=Config.REFRESH_TOKEN_EXPIRE_DAYS
+        days=settings.REFRESH_TOKEN_EXPIRE_DAYS
     )
     data = {"sub": user.email, "exp": expire}
     refresh_token = jwt.encode(
         data,
-        Config.REFRESH_TOKEN_SECRET_KEY,
-        algorithm=Config.ALGORITHM
+        settings.REFRESH_TOKEN_SECRET_KEY,
+        algorithm=settings.ALGORITHM
     )
     await UserCrud(User).update_refresh_token(
         user=user,
@@ -67,8 +78,8 @@ async def update_refresh_token(token: str):
     try:
         payload = jwt.decode(
             token,
-            Config.REFRESH_TOKEN_SECRET_KEY,
-            algorithms=[Config.ALGORITHM]
+            settings.REFRESH_TOKEN_SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
         )
     except JWTError:
         raise credentials
@@ -90,8 +101,8 @@ async def get_current_user(token: str):
     try:
         payload = jwt.decode(
             token,
-            Config.ACCESS_TOKEN_SECRET_KEY,
-            algorithms=[Config.ALGORITHM]
+            settings.ACCESS_TOKEN_SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
         )
         email: str = payload.get("sub")
         if email is None:

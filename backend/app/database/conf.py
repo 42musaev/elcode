@@ -1,8 +1,15 @@
 import databases
+import sqlalchemy
+
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine
 
-DATABASE_URI = "postgresql+asyncpg://postgres:postgres@db:5432/test_db"
-engine = create_engine(DATABASE_URI, connect_args={"check_same_thread": True})
-database = databases.Database(DATABASE_URI)
+from app.config import get_settings
+
 Base = declarative_base()
+settings = get_settings()
+
+DATABASE_URI = settings.get_database_url()
+database = databases.Database(DATABASE_URI)
+metadata = sqlalchemy.MetaData()
+engine = create_engine(DATABASE_URI)

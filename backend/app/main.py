@@ -6,11 +6,9 @@ from app.users.api import users
 
 app = FastAPI(docs_url='/api/v1/docs', redoc_url='/api/v1/redoc')
 
-origins = ["*"]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=['*'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
