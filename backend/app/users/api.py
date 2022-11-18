@@ -11,7 +11,7 @@ from app.users.utils import create_tokens
 from app.users.utils import update_refresh_token
 from app.users.utils import auth
 
-users = APIRouter()
+users = APIRouter(prefix='/users', tags=['users'])
 
 
 @users.get("/health-check")
@@ -19,7 +19,7 @@ async def health_check(user: UserSchema = Depends(auth)):
     return user.dict() | {"status-service": "work"}
 
 
-@users.post('/users', response_model=UserSchema, status_code=201)
+@users.post('/', response_model=UserSchema, status_code=201)
 async def create_user(user: UserCreateSchema):
     return await UserCrudHttp(User).create_user_http(user)
 
