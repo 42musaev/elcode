@@ -20,7 +20,5 @@ TESTING=False
     docker exec -it backend alembic revision --autogenerate -m "some text"
 
 
-#### Alembic
-
-    docker exec -it backend alembic upgrade head
-    docker exec -it backend alembic revision --autogenerate -m "some text"
+#### Tests
+    docker exec backend pytest -s .
