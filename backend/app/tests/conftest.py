@@ -6,6 +6,8 @@ from starlette.testclient import TestClient
 from sqlalchemy_utils import database_exists
 from sqlalchemy_utils import create_database
 
+from app.tests.user.data import DATA_USER
+
 environ['TESTING'] = 'True'
 
 from app.config import get_settings
@@ -23,12 +25,8 @@ def client():
 
 @pytest.fixture(scope='module', autouse=True)
 def user_token(client):
-    data_user = {
-        "email": "user@domain.com",
-        "password": "password"
-    }
-    client.post("/api/v1/users", json=data_user)
-    response = client.post("/api/v1/token", json=data_user)
+    client.post("/api/v1/users", json=DATA_USER)
+    response = client.post("/api/v1/token", json=DATA_USER)
     return response.json()
 
 

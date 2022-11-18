@@ -110,7 +110,7 @@ class UserCrudHttp(UserCrud):
                 "Incorrect email or password",
                 headers={"WWW-Authenticate": "Bearer"}
             )
-        return UserSchema(**user)
+        return UserSchema(id=user.id, email=user.email)
 
     async def get_user_by_email_http(
             self,
@@ -122,4 +122,4 @@ class UserCrudHttp(UserCrud):
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{self.model.__name__} not found"
             )
-        return UserSchema(**user)
+        return UserSchema(id=user.id, email=user.email)
