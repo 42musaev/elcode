@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 env:
-  SERVER_HOST: ${{ SERVER_HOST }}
-  SERVER_USER: ${{ SERVER_USER }}
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  SERVER_USER: ${{ secrets..SERVER_USER }}
   SERVER_PATH: /home/sammy/elcode
 
 jobs:
