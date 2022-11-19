@@ -1,16 +1,15 @@
 from pydantic import BaseModel
+from pydantic import Field
 from pydantic import EmailStr
 from pydantic import validator
 
 
 class UserLoginSchema(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(default="password")
 
 
 class UserCreateSchema(UserLoginSchema):
-    password: str
-
     @validator('password', always=True)
     def validate_password1(cls, value):
         min_length = 8
