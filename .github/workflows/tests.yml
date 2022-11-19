@@ -1,13 +1,13 @@
-name: Python package
+name: Tests
 
 on:
   push:
     branches:
       - main
-    paths:
-      - ".github/workflows/backend.yml"
   pull_request:
-    types: [opened, synchronize, ready_for_review]
+    branches:
+      - main
+  workflow_dispatch:
 
 
 jobs:
