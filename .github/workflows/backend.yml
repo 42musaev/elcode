@@ -25,4 +25,4 @@ jobs:
       - name: Build
         run: docker-compose -f docker-compose.yml build
       - name: Run Tests
-        run: docker-compose -f docker-compose.yml run backend pytest
+        run: docker-compose -f docker-compose.yml run backend pytest -s

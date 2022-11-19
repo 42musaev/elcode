@@ -1,7 +1,4 @@
 import uuid
-from typing import Dict
-
-from fastapi import HTTPException
 from sqlalchemy.dialects.postgresql import insert
 
 from app.database.conf import database
@@ -35,16 +32,6 @@ class NoteCrud:
 
 
 class NoteCrudHttp(NoteCrud):
-    @staticmethod
-    def _get_http_exception(
-            status_code: int,
-            detail: str, headers: Dict = None
-    ) -> HTTPException:
-        return HTTPException(
-            status_code=status_code,
-            detail=detail,
-            headers=headers,
-        )
 
     async def create_note_http(
             self,
