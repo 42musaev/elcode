@@ -19,7 +19,7 @@ async def health_check(user: UserSchema = Depends(auth)):
     return user.dict() | {"status-service": "work"}
 
 
-@users.post('/', response_model=UserSchema, status_code=201)
+@users.post('', response_model=UserSchema, status_code=201)
 async def create_user(user: UserCreateSchema):
     return await UserCrudHttp(User).create_user_http(user)
 
