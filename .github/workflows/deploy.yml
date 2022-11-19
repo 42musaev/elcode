@@ -1,0 +1,14 @@
+name: deploy
+
+on:
+  push:
+    branch:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and Run Docker
+      run: docker compose up
