@@ -4,4 +4,4 @@
     docker-compose up backend db
 
 #### Run the whole project with nginx
-    docker-compose up backend db
+    docker-compose up
