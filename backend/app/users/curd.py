@@ -1,15 +1,16 @@
 from datetime import datetime
 from typing import Dict
 
-from sqlalchemy import select
-from sqlalchemy import insert
-from sqlalchemy import update
-
 from fastapi import HTTPException
 from fastapi import status
 
+from sqlalchemy import select
+from sqlalchemy import update
+from sqlalchemy.dialects.postgresql import insert
+
 from app.database.conf import database
-from app.users.schemas import UserSchema, UserCreateSchema
+from app.users.schemas import UserSchema
+from app.users.schemas import UserCreateSchema
 
 from passlib.context import CryptContext
 
@@ -26,13 +27,14 @@ class UserCrud:
             insert(self.model).
             returning(
                 self.model.id,
-                self.model.email).
+                self.model.email
+            ).
             values(
                 email=user.email,
                 hashed_password=self.password_hash(user.password)
             )
         )
-        return await database.fetch_all(query)
+        return await database.fetch_one(query)
 
     async def get_user_by_email(self, email):
         query = select(self.model).where(self.model.email == email)
@@ -88,7 +90,7 @@ class UserCrudHttp(UserCrud):
     ) -> UserSchema | HTTPException:
         user_db = await self.get_user_by_email(user.email)
         if not user_db:
-            user = (await self.create_user(user))[0]
+            user = await self.create_user(user)
             return UserSchema(
                 id=user.id,
                 email=user.email,
