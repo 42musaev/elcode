@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 env:
-  SERVER_HOST: 194.87.110.228
-  SERVER_USER: sammy
+  SERVER_HOST: ${{ SERVER_HOST }}
+  SERVER_USER: ${{ SERVER_USER }}
   SERVER_PATH: /home/sammy/elcode
 
 jobs:
