@@ -19,4 +19,4 @@ async def health_check(user: UserSchema = Depends(auth)):
 
 @notes.post('', status_code=201, response_model=NoteSchema)
 async def create_note(note: NoteCreateSchema):
-    return await NoteCrudHttp(Note).create_note(note)
+    return await NoteCrudHttp(Note).create_note_http(note)
