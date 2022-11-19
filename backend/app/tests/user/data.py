@@ -1,4 +1,4 @@
 DATA_USER = {
-    "email": "user@admin.com",
-    "password": "password"
+  "email": "admin@example.com",
+  "password": "password"
 }

@@ -26,7 +26,7 @@ def client():
 @pytest.fixture(scope='module', autouse=True)
 def user_token(client):
     client.post("/api/v1/users", json=DATA_USER)
-    response = client.post("/api/v1/token", json=DATA_USER)
+    response = client.post("/api/v1/users/token", json=DATA_USER)
     return response.json()
 
 

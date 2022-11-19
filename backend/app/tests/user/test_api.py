@@ -1,5 +1,5 @@
 def test_login_user(client, user_token):
-    response = client.get("/api/v1/health-check", headers={
+    response = client.get("/api/v1/users/health-check", headers={
         "authorization": f"Bearer {user_token['access_token']}"
     })
     assert response.status_code == 200
