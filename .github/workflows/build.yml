@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  SERVER_HOST: 194.87.110.228
+  SERVER_USER: sammy
+  SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+  SERVER_PORT: 22
+  SERVER_PATH: /home/sammy/elcode
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.SERVER_HOST }}
+        username: ${{ env.SERVER_USER }}
+        password: ${{ env.SERVER_PASSWORD }}
+        port: 22
+        script: cd elcode && docker compose up -d
