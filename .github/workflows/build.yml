@@ -28,4 +28,4 @@ jobs:
         username: ${{ env.SERVER_USER }}
         password: ${{ env.SERVER_PASSWORD }}
         port: 22
-        script: ./start.sh
+        script: nohup ./start.sh &
