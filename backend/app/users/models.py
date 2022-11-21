@@ -4,6 +4,7 @@ from sqlalchemy import Integer
 from sqlalchemy import TIMESTAMP
 from sqlalchemy import Boolean
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 from app.database.conf import Base
 
@@ -19,3 +20,4 @@ class User(Base):
     disable = Column(Boolean, server_default=str(False).lower())
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, onupdate=func.now())
+    note = relationship("Note", backref="users")

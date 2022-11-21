@@ -4,6 +4,7 @@ from sqlalchemy import Integer
 from sqlalchemy import Text
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.sql import func
+from sqlalchemy import ForeignKey
 
 from app.database.conf import Base
 
@@ -17,3 +18,4 @@ class Note(Base):
     slug = Column(String(32), nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, onupdate=func.now())
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
