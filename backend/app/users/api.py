@@ -1,8 +1,9 @@
+
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.users import User
-from app.users.curd import UserCrudHttp
+from app.base.schemas import HealthCheckSchema
+from app.users.curd import UserCrud
 from app.users.schemas import UserLoginSchema
 from app.users.schemas import UserCreateSchema
 from app.users.schemas import UserSchema
@@ -15,24 +16,21 @@ users = APIRouter(prefix='/users', tags=['users'])
 
 
 @users.get("/health-check")
-async def health_check(user: UserSchema = Depends(auth)):
-    return user.dict() | {"status-service": "work"}
+async def health_check(user: UserSchema = Depends(auth)) -> HealthCheckSchema:
+    return HealthCheckSchema(email=user.email, status_service='works')
 
 
-@users.post('', response_model=UserSchema, status_code=201)
-async def create_user(user: UserCreateSchema):
-    return await UserCrudHttp(User).create_user_http(user)
+@users.post('', status_code=201)
+async def create_user(user: UserCreateSchema) -> UserSchema:
+    return await UserCrud.http_create_object(
+        email=user.email,
+        hashed_password=user.password
+    )
 
 
 @users.post('/token', response_model=TokenSchema, status_code=200)
 async def create_token(user: UserLoginSchema):
-    user = (
-        await UserCrudHttp(User).
-        get_user_by_email_and_password_http(
-            user.email,
-            user.password,
-        )
-    )
+    user = await UserCrud.get_one_or_none(email=user.email)
     return await create_tokens(user, roles=["admin"])
 
 

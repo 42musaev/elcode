@@ -13,7 +13,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     DATABASE_TEST_URL: str
 
-    def get_database_url(self):
+    @property
+    def database_url(self):
         if self.TESTING:
             return self.DATABASE_TEST_URL
         return self.DATABASE_URL
@@ -22,6 +23,4 @@ class Settings(BaseSettings):
         env_file = "app/.env"
 
 
-# @lru_cache() # disable lru_cache
-def get_settings():
-    return Settings()
+settings = Settings()
