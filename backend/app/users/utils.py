@@ -8,16 +8,14 @@ from jose import JWTError
 from starlette import status
 from starlette.requests import Request
 
-from app.users import User
 from app.users.curd import UserCrud
-from app.users.curd import UserCrudHttp
 from app.users.schemas import UserSchema
-from app.config import get_settings
+from app.config import settings
 
 from fastapi.security import HTTPBearer
 from fastapi import HTTPException
 
-settings = get_settings()
+# settings = get_settings()
 
 
 class OptionalHTTPBearer(HTTPBearer):
@@ -61,8 +59,8 @@ async def create_tokens(
         settings.REFRESH_TOKEN_SECRET_KEY,
         algorithm=settings.ALGORITHM
     )
-    await UserCrud(User).update_refresh_token(
-        user=user,
+    await UserCrud.update_object(
+        user.id,
         refresh_token=refresh_token,
         expires_token=expire
     )
@@ -85,7 +83,7 @@ async def update_refresh_token(token: str):
         raise credentials
     email: str = payload.get("sub")
     expire = payload.get("exp")
-    user = await UserCrud(User).get_user_by_email(email=email)
+    user = await UserCrud.get_one_or_none(email=email)
     if user.refresh_token == token:
         if datetime.fromtimestamp(expire) < user.expires_token:
             return await create_tokens(user=user)
@@ -110,8 +108,7 @@ async def get_current_user(token: str):
     except JWTError:
         raise credentials_exception
     user = await (
-        UserCrudHttp(User).
-        get_user_by_email_http(email=email)
+        UserCrud.get_one_or_none(email=email)
     )
     if user is None:
         raise credentials_exception

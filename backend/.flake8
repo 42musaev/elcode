@@ -1,3 +1,2 @@
 [flake8]
-extend-ignore = F403, F405, F401
-exclude = ./alembic,./app/users/config.py,./app/tests/conftest.py
+exclude = ./alembic,./app/tests,./app/users/__init__.py
