@@ -7,7 +7,7 @@ def test_login_user(client, user_token):
 
 def test_create_user(client):
     data_user = {
-        "email": "user@example.com",
+        "email": "users@example.com",
         "password": "password"
     }
     response = client.post("/api/v1/users", json=data_user)

@@ -6,7 +6,7 @@ from starlette.testclient import TestClient
 from sqlalchemy_utils import database_exists
 from sqlalchemy_utils import create_database
 
-from app.tests.user.data import DATA_USER
+from app.tests.users.data import DATA_USER
 
 environ['TESTING'] = 'True'
 
